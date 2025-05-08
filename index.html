@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>ESP32 智能家居控制</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      max-width: 500px;
+      margin: 30px auto;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .section h2 {
+      margin-bottom: 15px;
+      font-size: 20px;
+      color: #444;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 5px;
+      text-align: left;
+    }
+
+    .button {
+      width: 100%;
+      margin: 8px 0;
+      padding: 15px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: background 0.3s, transform 0.1s ease-in-out;
+    }
+
+    .button img {
+      width: 22px;
+      height: 22px;
+    }
+
+    .btn-green { background-color: #4CAF50; }
+    .btn-gray { background-color: #9e9e9e; }
+    .btn-red { background-color: #f44336; }
+    .btn-blue { background-color: #2196F3; }
+    .btn-orange { background-color: #ff9800; }
+
+    .button:active {
+      transform: translateY(2px);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ESP32 智能家居控制</h1>
+
+    <!-- 灯光控制 -->
+    <div class="section">
+      <h2>💡 灯光控制</h2>
+      <button class="button btn-orange" onclick="sendCommand('on')">
+        <img src="https://cdn-icons-png.flaticon.com/512/1040/1040230.png"> 开灯
+      </button>
+      <button class="button btn-gray" onclick="sendCommand('off')">
+        <img src="https://cdn-icons-png.flaticon.com/512/1040/1040256.png"> 关灯
+      </button>
+    </div>
+
+    <!-- 风扇控制 -->
+    <div class="section">
+      <h2>🌀 风扇控制</h2>
+      <button class="button btn-red" onclick="sendCommand('motor_on')">
+        <img src="https://cdn-icons-png.flaticon.com/512/151/151934.png"> 制热
+      </button>
+      <button class="button btn-blue" onclick="sendCommand('motor_reverse')">
+        <img src="https://cdn-icons-png.flaticon.com/512/151/151935.png"> 制冷
+      </button>
+      <button class="button btn-gray" onclick="sendCommand('motor_off')">
+        <img src="https://cdn-icons-png.flaticon.com/512/565/565340.png"> 关闭风扇
+      </button>
+    </div>
+
+    <!-- 窗帘控制 -->
+    <div class="section">
+      <h2>🪟 窗帘控制</h2>
+      <button class="button btn-green" onclick="sendCommand('step_motor_on')">
+        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828906.png"> 开启窗帘
+      </button>
+      <button class="button btn-gray" onclick="sendCommand('step_motor_reverse')">
+        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png"> 关闭窗帘
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const client = mqtt.connect("wss://y690b311.ala.cn-hangzhou.emqxsl.cn:8084/mqtt", {
+      username: "xsj",
+      password: "123456"
+    });
+
+    client.on("connect", () => {
+      console.log("MQTT连接成功");
+    });
+
+    function sendCommand(cmd) {
+      client.publish("esp32/control", cmd);
+      console.log("发送命令:", cmd);
+    }
+  </script>
+</body>
+</html>
